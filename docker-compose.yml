@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+
+# 🟢 Frontend (React)
+
+client:
+build:
+context: ./client
+dockerfile: Dockerfile
+container_name: chat-client
+ports:
+- "5173:5173"
+depends_on:
+- server
+environment:
+- VITE_API_URL=http://localhost:5000
+networks:
+- app-network
+
+# 🔵 Backend (Node.js + WebSocket)
+
+server:
+build:
+context: ./server
+dockerfile: Dockerfile
+container_name: chat-server
+ports:
+- "5000:5000"
+depends_on:
+- redis
+- db
+- ai-service
+environment:
+- PORT=5000
+- JWT_SECRET=supersecret
+- DB_URI=mongodb://db:27017/chat-app
+- REDIS_URL=redis://redis:6379
+- AI_SERVICE_URL=http://ai-service:8000
+networks:
+- app-network
+
+# 🤖 AI Service (Python - FastAPI)
+
+ai-service:
+build:
+context: ./ai-service
+dockerfile: Dockerfile
+container_name: ai-service
+ports:
+- "8000:8000"
+environment:
+- OPENAI_API_KEY=your_openai_key
+- VECTOR_DB_PATH=/app/vector-db
+volumes:
+- ./ai-service/vector-db:/app/vector-db
+networks:
+- app-network
+
+# 🔴 Redis (Pub/Sub + Cache)
+
+redis:
+image: redis:7
+container_name: redis
+ports:
+- "6379:6379"
+networks:
+- app-network
+
+# 🟡 Database (MongoDB)
+
+db:
+image: mongo:6
+container_name: mongodb
+ports:
+- "27017:27017"
+volumes:
+- mongo-data:/data/db
+networks:
+- app-network
+
+networks:
+app-network:
+driver: bridge
+
+volumes:
+mongo-data:

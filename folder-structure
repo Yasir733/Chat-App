@@ -1,0 +1,130 @@
+real-time-chat-ai/
+│
+├── client/                # React frontend
+├── server/                # Main backend (Node.js)
+├── ai-service/            # Python/Node AI microservice (RAG, LLM)
+├── docker/                # Docker configs
+├── docs/                  # Architecture & API docs
+├── .env
+├── docker-compose.yml
+└── README.md
+=========================================================================================================================================================
+
+client
+client/
+│
+├── public/
+├── src/
+│   ├── api/               # Axios / API calls
+│   ├── components/
+│   │   ├── Chat/
+│   │   ├── AI/
+│   │   └── Common/
+│   ├── hooks/
+│   │   ├── useSocket.js
+│   │   └── useAuth.js
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   ├── Chat.jsx
+│   │   └── Dashboard.jsx
+│   ├── context/           # Auth + Chat context
+│   ├── utils/
+│   ├── services/          # socket + API abstraction
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── package.json
+└── vite.config.js
+
+=========================================================================================================================================================
+server
+server/
+│
+├── src/
+│   ├── config/            # DB, Redis, env configs
+│   ├── modules/
+│   │
+│   │   ├── auth/
+│   │   │   ├── auth.controller.js
+│   │   │   ├── auth.service.js
+│   │   │   ├── auth.routes.js
+│   │   │   └── auth.middleware.js   # JWT validation
+│   │
+│   │   ├── chat/
+│   │   │   ├── chat.controller.js
+│   │   │   ├── chat.service.js
+│   │   │   ├── chat.routes.js
+│   │   │   └── chat.socket.js      # WebSocket logic
+│   │
+│   │   ├── user/
+│   │   │   ├── user.model.js
+│   │   │   ├── user.service.js
+│   │   │   └── user.controller.js
+│   │
+│   │   └── ai/
+│   │       ├── ai.controller.js
+│   │       ├── ai.service.js       # calls AI microservice
+│   │       └── ai.routes.js
+│
+│   ├── middleware/
+│   │   ├── auth.middleware.js
+│   │   ├── error.middleware.js
+│   │
+│   ├── sockets/
+│   │   ├── index.js               # socket init
+│   │   └── redis.adapter.js      # Redis pub/sub scaling
+│
+│   ├── utils/
+│   ├── app.js
+│   └── server.js
+│
+├── package.json
+└── Dockerfile
+
+=========================================================================================================================================================
+ai-service/
+│
+├── src/
+│   ├── config/
+│   │   ├── llm_config.py
+│   │   └── vector_db.py
+│
+│   ├── rag/
+│   │   ├── embeddings.py
+│   │   ├── retriever.py
+│   │   ├── pipeline.py
+│
+│   ├── agents/             # optional (crewAI / LangChain)
+│   ├── routes/
+│   │   ├── chat.py         # AI chat endpoint
+│   │   └── rag.py
+│
+│   ├── services/
+│   │   ├── llm_service.py
+│   │   └── rag_service.py
+│
+│   ├── models/             # schema for requests
+│   ├── main.py             # FastAPI / Flask entry
+│
+├── requirements.txt
+└── Dockerfile
+
+=========================================================================================================================================================
+Redis:
+├── Pub/Sub → Real-time messaging across servers
+├── Caching → Chat history / AI responses
+└── Rate limiting (optional)
+
+=========================================================================================================================================================
+vector-db/
+├── documents/
+├── embeddings/
+└── index/
+
+=========================================================================================================================================================
+docker/
+├── nginx/
+├── redis/
+└── db/
+
+=========================================================================================================================================================
